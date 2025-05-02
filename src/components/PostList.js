@@ -22,26 +22,39 @@ const PostList = () => {
   }, []);
 
   // In your handleSubmit:
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    await axios.post(`${API_URL}/posts`, { 
-      title, 
-      content 
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!title.trim() || !content.trim()) {
+      alert('Please enter both title and content');
+      return;
+    }
+  
+    try {
+      const response = await axios.post('http://localhost:5000/api/posts', {
+        title,
+        content
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('Post created successfully:', response.data);
+      
+      // Update local state immediately
+      setPosts([response.data, ...posts]);
+      setTitle('');
+      setContent('');
+      
+    } catch (error) {
+      console.error('Error creating post:', error);
+      if (error.response) {
+        console.error('Server responded with:', error.response.data);
       }
-    });
-    setTitle('');
-    setContent('');
-    // Refresh posts after successful submission
-    const res = await axios.get(`${API_URL}/posts`);
-    setPosts(res.data);
-  } catch (err) {
-    console.error("Error submitting post:", err);
-  }
-};
+      alert('Failed to create post. Check console for details.');
+    }
+  };
 
   return (
     <div className="app-container">
