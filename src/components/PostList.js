@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import BlogPost from './BlogPost';
+import './PostList.css';
+const API_URL = "http://localhost:5000/api";
 
 const PostList = () => {
   const [posts, setPosts] = useState([]);
@@ -7,63 +10,63 @@ const PostList = () => {
   const [content, setContent] = useState('');
 
   useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/posts`);
+        setPosts(res.data);
+      } catch (err) {
+        console.error("Error fetching posts:", err);
+      }
+    };;
     fetchPosts();
   }, []);
 
-  const fetchPosts = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/api/posts');
-      setPosts(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('http://localhost:5000/api/posts', { title, content });
-      setTitle('');
-      setContent('');
-      fetchPosts();
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // In your handleSubmit:
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    await axios.post(`${API_URL}/posts`, { 
+      title, 
+      content 
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    setTitle('');
+    setContent('');
+    // Refresh posts after successful submission
+    const res = await axios.get(`${API_URL}/posts`);
+    setPosts(res.data);
+  } catch (err) {
+    console.error("Error submitting post:", err);
+  }
+};
 
   return (
-    <div>
-      <h1>Simple Blog</h1>
-      
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title:</label>
-          <input 
-            type="text" 
-            value={title} 
-            onChange={(e) => setTitle(e.target.value)} 
-            required 
+    <div className="app-container">
+      <div className="form-container">
+        <h2>New Post</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title"
+            required
           />
-        </div>
-        <div>
-          <label>Content:</label>
-          <textarea 
-            value={content} 
-            onChange={(e) => setContent(e.target.value)} 
-            required 
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Your thoughts..."
+            required
           />
-        </div>
-        <button type="submit">Create Post</button>
-      </form>
-
-      <div>
-        <h2>Posts</h2>
+          <button type="submit">Publish</button>
+        </form>
+      </div>
+      <div className="posts-container">
         {posts.map(post => (
-          <div key={post._id} style={{ marginBottom: '20px', borderBottom: '1px solid #ccc' }}>
-            <h3>{post.title}</h3>
-            <p>{post.content}</p>
-            <small>{new Date(post.createdAt).toLocaleString()}</small>
-          </div>
+          <BlogPost key={post._id} post={post} />
         ))}
       </div>
     </div>

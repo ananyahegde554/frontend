@@ -1,0 +1,38 @@
+.blog-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: 'Georgia', serif;
+    color: #333;
+  }
+  
+  .blog-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  
+  .blog-category {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    color: #8c8c8c;
+    text-transform: uppercase;
+  }
+  
+  .blog-content {
+    line-height: 1.8;
+  }
+  
+  .blog-divider {
+    height: 1px;
+    background: #e8e8e8;
+    margin: 1.5rem 0;
+  }
+  
+  .blog-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #8c8c8c;
+  }
